@@ -1,12 +1,12 @@
 import { KiteConnect } from "kiteconnect";
+import dotenv from "dotenv";
 
-const apiKey = "u3xtejmnm2t3zap4";
-// const apiSecret = "50a8o1t3z9qhnoxkfq7lm4gksaqiqcvp";
-// const requestToken = "1q3T7shYCmripFSX2WiHRkZAB8wXlCPa";
+dotenv.config();
 
-let accessToken = "Jn2j0WJJwA29jInRom5PphHMVvdArh3y";
+let api_key = process.env.apiKey ?? "";
+let accessToken = process.env.accessToken ?? "";
 
-const kc = new KiteConnect({ api_key: apiKey });
+const kc = new KiteConnect({ api_key: api_key });
 
 console.log(kc.getLoginURL());
 
