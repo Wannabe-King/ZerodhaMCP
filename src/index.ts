@@ -1,49 +1,50 @@
-import { KiteConnect } from "kiteconnect";
-import dotenv from "dotenv";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+import { placeOrder, getProfile, getPortfolio } from "./trade";
 
-dotenv.config();
+// Create an MCP server
+const server = new McpServer({
+  name: "Demo",
+  version: "1.0.0",
+});
 
-let api_key = process.env.apiKey ?? "";
-let accessToken = process.env.accessToken ?? "";
-
-const kc = new KiteConnect({ api_key: api_key });
-
-console.log(kc.getLoginURL());
-
-async function init() {
-  try {
-    await generateSession();
-    await getProfile();
-  } catch (err) {
-    console.error(err);
+server.tool(
+  "buy-stock",
+  "Buys stock on zerodha exchange",
+  {
+    symbol: z.string(),
+    quantity: z.number(),
+  },
+  async ({ symbol, quantity }) => {
+    placeOrder(symbol, quantity, "BUY");
+    return {
+      content: [{ type: "text", text: "Stock has been bought" }],
+    };
   }
-}
+);
 
-async function generateSession() {
-  try {
-    // const response = await kc.generateSession(requestToken, apiSecret);
-    // console.log(response.access_token);
-    kc.setAccessToken(accessToken);
-    // console.log("Session generated:", response);
-  } catch (err) {
-    console.error("Error generating session:", err);
+server.tool(
+  "sell-stock",
+  "Sells stock on zerodha exchange",
+  {
+    symbol: z.string(),
+    quantity: z.number(),
+  },
+  async ({ symbol, quantity }) => {
+    placeOrder(symbol, quantity, "SELL");
+    return {
+      content: [{ type: "text", text: "Stock has been sold" }],
+    };
   }
-}
+);
 
-async function getProfile() {
-  try {
-    const profile = await kc.placeOrder("regular", {
-      exchange: "NSE",
-      tradingsymbol: "HDFCBANK",
-      transaction_type: "BUY",
-      quantity: 1,
-      product: "CNC",
-      order_type: "MARKET",
-    });
-    console.log("Profile:", profile);
-  } catch (err) {
-    console.error("Error getting profile:", err);
-  }
-}
-// Initialize the API calls
-init();
+server.tool("see-portfolio", "See all the holding", {}, async () => {
+  const portfolio = await getPortfolio();
+  return {
+    content: [{ type: "text", text: portfolio }],
+  };
+});
+
+const transport = new StdioServerTransport();
+server.connect(transport);
