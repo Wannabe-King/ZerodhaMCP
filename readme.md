@@ -2,6 +2,11 @@
 
 I made this TypeScript-based server that integrates Zerodha's Kite Connect API with the Model Context Protocol (MCP). I have made it to explore the functionality of MCP servers.It enables AI agents to perform trading operations such as buying and selling stocks, as well as viewing the user's portfolio, through standardized tools exposed via MCP.
 
+![image](https://github.com/user-attachments/assets/e9254fee-0fa6-45e3-94dc-3be1cae6bfc2)
+
+![image](https://github.com/user-attachments/assets/3c61e5c4-7f8b-4f91-9d3f-6828277dfd18)
+
+
 ### Project Structure
 
 ```
